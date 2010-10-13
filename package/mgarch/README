@@ -1,0 +1,22 @@
+Package `mgarch'
+
+Package for MGARCH modelling.
+
+Authors:
+  Harald SCHMIDBAUER      <harald@hs-stat.com>
+  Angi Roesch             <angi.r@t-online.de>
+  Vehbi Sinan TUNALIOGLU  <vst@vsthost.com>
+
+License: GPL - GNU General Public Licence
+
+Depends on the following R packages:
+  ts (included in the R distribution).
+ ___________________________________________________________________________
+| This package uses a previously written library, Meschach - a numerical
+| library of C routines for performing calculations on matrices and vectors.
+| (This is a deprecated message. We implemented the API of meschach from scratch.)
+|__________________________________________________________________________
+Meschach is written by David E. Stewart (david.stewart@anu.edu.au) and Zbigniew
+Leyk (zbigniew.leyk@anu.edu.au). Thanks to Stewart and Leyk for this
+important contribution.
+

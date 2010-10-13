@@ -1,0 +1,7 @@
+cdts            Combine daily time series
+elem.an         Elementary analysis
+mvBEKK.diag     Support diagnosis of BEKK(p,q) model fitting
+mvBEKK.est      Estimate a BEKK(p,q) model
+mvBEKK.sim      Simulate a BEKK(p,q) model
+mGJR.est        (experimental) estimate an mGJR(p,q,g) model
+DCC.est         estimate a DCC model

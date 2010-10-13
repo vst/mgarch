@@ -1,0 +1,11 @@
+importFrom("utils", "packageDescription")
+useDynLib(mgarch)
+export(
+       cdts,
+       elem.an,
+       mvBEKK.diag,
+       mvBEKK.est,
+       mvBEKK.sim,
+       mGJR.est,
+       DCC.est
+       )

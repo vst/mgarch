@@ -1,0 +1,7 @@
+TODO LIST
+
+* change the default parameter list for simulation and estimation process in a meaningful manner.
+* t-distribution should be added.
+* check memory leaks.
+* correlations should be calculated in both of simulation and estimation functions.
+* documentation should be kept up-to-date.
