@@ -1,6 +1,6 @@
 Package: mgarch
-Version: 0.00-1
-Date: 2009-07-06
+Version: 0.00-2
+Date: 2010-10-22
 Title: various tools for simulating, estimating and diagnosting MGARCH processes
 Author: Harald SCHMIDBAUER <harald@hs-stat.com>,
 		Angi Roesch <angi.r@t-online.de>,
@@ -10,5 +10,4 @@ Depends: R (>= 2.6.0), tseries, mvtnorm
 Imports: utils, tseries, mvtnorm
 Description: Package for simulating, estimating and diagnosting various MGARCH processes
 License: GPL (>= 3)
-URL: http://mgarch.sf.net
-Packaged: Wed Jul  8 21:44:04 2009; vst
+URL: http://github.com/beesdom/mgarch/

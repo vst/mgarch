@@ -52,9 +52,11 @@ tage = seq(ISOdate(begin.year, begin.month, begin.day.in.month),
            ISOdate(last.year,   last.month,  last.day.in.month), 'day')
 tage = trunc.POSIXt(tage, units = "days")
 tage.as.character = as.character(tage, '%Y-%m-%d')
-weekday = weekdays(tage)
+weekday = format(tage, '%w')  # weekday = weekdays(tage)
 
 
+
+# browser()
 
 ############################################################################################
 ############################################################################################
@@ -244,7 +246,7 @@ if (verbose == T) {cat('Beginning to build the weekly series.\n')}
 ###  The following two functions do this.
 subst.Wednesday = function(weekday, series) {
   new.series = series
-  Tuesday.missing = ( is.na(series) & (weekday == 'Tuesday') )
+  Tuesday.missing = ( is.na(series) & (weekday == '2') ) # Tuesday.missing = ( is.na(series) & (weekday == 'Tuesday') )
   which.Tuesday.missing = which(Tuesday.missing == T)
   # make sure a missing Tuesday to be replaced is not the LAST day in the series:
   if ( length(Tuesday.missing[Tuesday.missing == T]) > 0 ) {
@@ -259,7 +261,7 @@ subst.Wednesday = function(weekday, series) {
 
 subst.Monday = function(weekday, series) {
   new.series = series
-  Tuesday.missing = ( is.na(series) & (weekday == 'Tuesday') )
+  Tuesday.missing = ( is.na(series) & (weekday == '2') ) # Tuesday.missing = ( is.na(series) & (weekday == 'Tuesday') )
   which.Tuesday.missing = which(Tuesday.missing == T)
   # make sure a missing Tuesday to be replaced is not the FIRST day in the series:
   if ( length(Tuesday.missing[Tuesday.missing == T]) > 0 ) {
@@ -286,7 +288,7 @@ for ( i in 1:length(file.names)) {
 
 ###  Remove all non-Tuesdays from this list and build it once again
 ###  (to get the counting index straight):
-is.Tuesday = ( temp.data.daily.list[['weekday']] == 'Tuesday' )
+is.Tuesday = ( temp.data.daily.list[['weekday']] == '2' )  # is.Tuesday = ( temp.data.daily.list[['weekday']] == 'Tuesday' )
 temp.data.weekly.list[['date']] = temp.data.weekly.list[['date']][is.Tuesday == T]
 temp.data.weekly.list[['weekday']] = temp.data.weekly.list[['weekday']][is.Tuesday == T]
 for ( i in 1:length(file.names)) {
