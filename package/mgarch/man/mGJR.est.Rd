@@ -25,7 +25,7 @@ mGJR.est(eps1, eps2, order = c(1,1,1), params = NULL, fixed = NULL, method = "BF
 }
 
 \details{
-  \code{mGJR.est} estimates a mGJR(p,q) model, where p stands for the 
+  \code{mGJR.est} estimates a mGJR(p,q) model, where p stands for the
   GARCH order, and q stands for the ARCH order
 }
 
@@ -54,13 +54,13 @@ mGJR.est(eps1, eps2, order = c(1,1,1), params = NULL, fixed = NULL, method = "BF
 \references{
 	Bauwens L., S. Laurent, J.V.K. Rombouts:
 	Multivariate GARCH models: A survey, April, 2003
-	
+
 	Bollerslev T.:
 	Modelling the coherence in short-run nominal exchange rate: A multivariate generalized ARCH approach, Review of Economics and Statistics, 498--505, 72, 1990
-	
+
 	Engle R.F., K.F. Kroner:
 	Multivariate simultaneous generalized ARCH, Econometric Theory, 122-150, 1995
-	
+
 	Engle R.F.:
 	Dynamic conditional correlation: A new simple class of multivariate GARCH models, Journal of Business and Economic Statistics, 339--350, 20, 2002
 
@@ -71,9 +71,6 @@ mGJR.est(eps1, eps2, order = c(1,1,1), params = NULL, fixed = NULL, method = "BF
 \author{
 Harald SCHMIDBAUER \email{harald@hs-stat.com},
 Vehbi Sinan TUNALIOGLU \email{vst@vsthost.com}
-}
-
-\seealso{
 }
 
 \examples{

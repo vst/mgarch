@@ -93,14 +93,14 @@ void m_transp(MAT * in, MAT * out)
 	{
 		err_exit(ERR_DESTNULL, "m_transp");
 	}
-	
+
 	same = ( in == out );
-	
+
 	if(same && in->rows != in->cols)
 	{
 		err_exit(ERR_TRANSPDIFFDIMS, "m_transp");
 	}
-	
+
 	if(out->rows != in->cols || out->cols != in->rows)
 	{
 		err_exit(ERR_TRANSPDIFFDIMS, "m_transp");
@@ -134,15 +134,15 @@ void m_transp(MAT * in, MAT * out)
 void m_foutput(FILE * fp, MAT * a)
 {
 	unsigned int i, j, tmp;
-	
+
 	if(a == NULL) /* check whether the matrix exist or not*/
 	{
 		fprintf(fp, "MATRIX: NULL\n");
 		return;
 	}
-	
+
 	fprintf(fp, "Matrix: %d by %d\n", a->rows, a->cols);
-	
+
 	if(a->me == NULL) /* check the content array */
 	{
 		fprintf(fp, "NULL\n");
@@ -170,7 +170,7 @@ MAT * m_get(int m, int n)
 {
 	MAT * matrix;	/* matrix to be returned */
 	int	i;			/* temporary variable */
-	
+
 	/* check the dimensions, both should be equal or greater then zero */
 	if(m < 0 || n < 0)
 	{
@@ -183,7 +183,7 @@ MAT * m_get(int m, int n)
 	{
 		err_exit(ERR_MEM, "m_get");
 	}
-	
+
 	matrix->rows = m;
 	matrix->cols = n;
 
@@ -193,7 +193,7 @@ MAT * m_get(int m, int n)
 		free(matrix);
 		err_exit(ERR_MEM, "m_get");
 	}
-	
+
 	for(i = 0; i < m; i++)
 	{
 		matrix->me[i] = NEW_A(n, double);
@@ -210,7 +210,7 @@ MAT * m_get(int m, int n)
 void m_copy(MAT * source, MAT * destination)
 {
 	unsigned int i, j;
-	
+
 	if(source == NULL) /* source cannot be NULL */
 	{
 		err_exit(ERR_SRCNULL, "m_copy");
@@ -222,12 +222,12 @@ void m_copy(MAT * source, MAT * destination)
 	}
 
 	if(
-		(source->cols != destination->cols) || 
+		(source->cols != destination->cols) ||
 		(source->rows != destination->cols)) /* not same-dimensioned matrices */
 	{
 		err_exit(ERR_DIFFDIMS, "m_copy");
 	}
-	
+
 	if(source == destination) /* nothing to be done */
 	{
 		return;
@@ -236,7 +236,7 @@ void m_copy(MAT * source, MAT * destination)
 	for( i = 0; i < source->rows; i++)
 	{
 		/**
-		 * TODO 
+		 * TODO
 		 * THERE IS A SIGNIFICANT BUG IN MEM_COPY FUNCTION, OR JUST HERE IN THE BELOW LINE
 		 * mem_copy((int *)&(source->me[i][0]), (int *)&(destination->me[i][0]), source->cols * sizeof(double));
 		 */
@@ -252,7 +252,7 @@ void m_copy(MAT * source, MAT * destination)
 void m_add(MAT * mat1, MAT * mat2, MAT * result)
 {
 	unsigned int i, j;
-	
+
 	if(mat1 == NULL || mat2 == NULL) /* operands cannot be NULL */
 	{
 		err_exit(ERR_OPSNULL, "m_add");
@@ -264,9 +264,9 @@ void m_add(MAT * mat1, MAT * mat2, MAT * result)
 	}
 
 	if(
-		(mat1->cols != mat2->cols) || 
-		(mat1->cols != result->cols) || 
-		(mat1->rows != mat2->cols) || 
+		(mat1->cols != mat2->cols) ||
+		(mat1->cols != result->cols) ||
+		(mat1->rows != mat2->cols) ||
 		(mat1->rows != result->rows)) /* not same-dimensioned matrices */
 	{
 		err_exit(ERR_DIFFDIMS, "m_add");
@@ -276,7 +276,7 @@ void m_add(MAT * mat1, MAT * mat2, MAT * result)
 	 * TODO
 	 * Think about whether the values of the operands would be overwritten
 	 * or not if we allow that the result is the same matrix of one of the
-	 * operands. It seems ok, since the mathematical operations like 
+	 * operands. It seems ok, since the mathematical operations like
 	 * "a = a + b" are ok.
 	 */
 
@@ -300,12 +300,12 @@ void m_mlt(MAT * A, MAT * B, MAT * OUT)
 	{
 		err_exit(ERR_OPSNULL, "m_mlt");
 	}
-	
+
 	if(OUT == NULL)
 	{
 		err_exit(ERR_RESNULL, "m_mlt");
 	}
-	
+
  	if(A->cols != B->rows)
 	{
 		/**
@@ -315,16 +315,16 @@ void m_mlt(MAT * A, MAT * B, MAT * OUT)
 		 */
 		err_exit(ERR_OPDIFFDIMS, "m_mlt");
 	}
-	
+
 	if(A == OUT || B == OUT)
 	{
 		err_exit(ERR_OPRESSAME, "m_mlt");
 	}
-	
+
 	m = A->rows;
 	n = A->cols;
 	p = B->cols;
-	
+
 	A_v = A->me;
 	B_v = B->me;
 
@@ -349,7 +349,7 @@ void m_mlt(MAT * A, MAT * B, MAT * OUT)
 			OUT->me[i][j] = sum;
 		}
 	}
-	
+
 	return;
 }
 
@@ -498,7 +498,7 @@ void sm_mlt(double scalar, MAT * B, MAT * OUT)
 	{
 		err_exit(ERR_OPSNULL, "sm_mlt");
 	}
-	
+
 	if(OUT == NULL)
 	{
 		err_exit(ERR_RESNULL, "sm_mlt");
@@ -506,7 +506,7 @@ void sm_mlt(double scalar, MAT * B, MAT * OUT)
 
 	m = B->rows;
 	p = B->cols;
-	
+
 	B_v = B->me;
 
 	if(OUT->rows != B->rows || OUT->cols != B->cols)
@@ -526,6 +526,6 @@ void sm_mlt(double scalar, MAT * B, MAT * OUT)
 			OUT->me[j][k] = scalar * B_v[j][k];
 		}
 	}
-	
+
 	return;
 }

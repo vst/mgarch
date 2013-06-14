@@ -98,6 +98,7 @@
 #####################################################################################
 
 
+##' @export
 elem.an <- function(
   index.name,
   from.to = NULL, # to restrict the analysis to a subperiod

@@ -20,6 +20,7 @@
 ## is altered from 'tmp.count + 1' to 'tmp.count + 1 + order[1] + order[2]' refering to the Gamma matrices
 ## (lines 429f).
 
+##' @export
 mGJR.est<-
 function(
 			eps1,			 # first time series
@@ -109,12 +110,12 @@ function(
 		{
 			stop("fixed should be an array of two vectors. Try fixed = array(c(a,b,c,d,...), dim = c(2,y))")
 		}
-		
+
 		if(dim(fixed)[1] != 2)
 		{
 			stop("fixed should be an array of two vectors. Try fixed = array(c(a,b,c,d,...), dim = c(2,y))")
 		}
-		
+
 		if(length(fixed[1,]) != length(fixed[2,]))
 		{
 			stop("fixed should be an array of two vectors. Try fixed = array(c(a,b,c,d,...), dim = c(2,y))")
@@ -136,7 +137,7 @@ function(
 			stop("fixed array could not contain more index-value pairs than the params array length");
 		}
 	}
-	
+
 	# check the method specified in the argument list
 	if(!(
 		(method == "Nelder-Mead") ||
@@ -149,7 +150,7 @@ function(
 		stop("'", method, "' method is not available")
 	}
 
-	
+
 	fake.params = params
 	if(!is.null(fixed))
 	{
@@ -161,7 +162,7 @@ function(
 		}
 		fake.params = na.omit(fake.params)
 	}
-	
+
 	# parameters seem appropriate
 	# define the loglikelihood function
 	loglikelihood.GJR <- function(params)
@@ -178,11 +179,11 @@ function(
 			retval = 0.0,
 			PACKAGE = "mgarch"
 		)
-		
+
 		if(is.nan(loglikelihood.GJR$retval) == T)
 		{
 			nonusedret = 1e+100
-			
+
 		}
 		else
 		{
@@ -192,9 +193,9 @@ function(
 	}
 
 	# begin estimation process
-	
+
 	# first log the start time
-	start = Sys.time()		
+	start = Sys.time()
 	cat("Starting estimation process via loglikelihood function implemented in C.\n")
 	cat("Optimization Method is '", method, "'\n")
 
@@ -211,7 +212,7 @@ function(
 	# calculate the AIC
 	# it is estimation value + number of estimated parameters
 	aic = estimation$value + (length(params) - length(fixed[1,]))
-	
+
 	# following script will prepare an object that holds the estimated
 	# parameters and some useful diagnostics data like estimated correlation,
 	# standard deviation, eigenvalues and so on.
@@ -226,7 +227,7 @@ function(
 	{
 		estimation$hessian = matrix(c(0,0.1,0.2,0), nrow = 2, ncol = 2)
 	}
-	
+
 	# get the hessian matrix and grap the diagonal
 	inv.hessian.mat = solve(estimation$hessian)
 
@@ -235,7 +236,7 @@ function(
 	{
 		diag.inv.hessian[count] = sqrt(inv.hessian.mat[count,count])
 	}
-	
+
 	# fix the asymptotic-theory standard errors of the
 	# coefficient estimates with fixed parameters
 	if(!is.null(fixed))
@@ -265,7 +266,7 @@ function(
 	# construct the asymptotic-theory standard errors of the coefficient estimates matrices
 	parnum = 1 + order[1] + order[2] + order[3]	# calculate number of paramater matrices
 	asy.se.coef = list()				# declare the asy.se.coef matrices list
-	
+
 	# first initialize the first asy.se.coef matrix, corresponding to the C matrix
 	asy.se.coef[[1]] = array(c(diag.inv.hessian[1], 0, diag.inv.hessian[2], diag.inv.hessian[3]), dim = c(2,2))
 
@@ -276,9 +277,9 @@ function(
 	}
 
 	asy.se.coef[[parnum + 1]] = diag.inv.hessian[length.params]
-	
+
 	buff.par = list()					# declare the parameter list
-	
+
 	# shift the fixed parameters inside the estimated paramters
 	if(!is.null(fixed))
 	{
@@ -448,7 +449,7 @@ function(
 
 	# diagnostics ready
 	cat("Diagnostics ended...\n")
-	
+
 	names(order) <- c("GARCH component", "ARCH component", "HJR component")
 	names(buff.par) <- as.integer(seq(1, parnum + 1))
 
@@ -474,10 +475,10 @@ function(
 	)
 
 	class(mGJR.est) = "mGJR.est"
-	
+
 	cat("Class attributes are ready via following names:\n")
 	cat(names(mGJR.est), "\n")
 
-	
+
 	return(mGJR.est)
 }

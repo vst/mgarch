@@ -1,3 +1,4 @@
+##' @export
 cdts <- function(
                file.names,
                return.formula = 'simple',

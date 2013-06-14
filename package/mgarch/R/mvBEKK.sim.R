@@ -15,12 +15,13 @@
 ## writing to the Free Software Foundation, Inc., 59 Temple Place,
 ## Suite 330, Boston, MA  02111-1307  USA.
 
-mvBEKK.sim<- 
+##' @export
+mvBEKK.sim<-
 function(
 			series.count,		# length of the series
 			T,			# number of the series
 			order  = c(1, 1),	# order list of the BEKK model : BEKK(p,q)
-			params = NULL		# initial parameters for simulation 
+			params = NULL		# initial parameters for simulation
 		)
 {
   count.triangular <-
@@ -32,7 +33,7 @@ function(
         dimension + count.triangular(dimension - 1)
       }
     }
-  
+
 	# check the given order
 	# orders should be integers
 	if(order[1] != as.integer(order[1]) || order[2] != as.integer(order[2]))
@@ -44,9 +45,9 @@ function(
 	{
 		stop("BEKK(",order[1],",",order[2],") is not implemented.")
 	}
-	
+
 	# init the initial parameters
-	params.length = count.triangular(series.count) + (order[1] * series.count^2) + (order[2] * series.count^2) 
+	params.length = count.triangular(series.count) + (order[1] * series.count^2) + (order[2] * series.count^2)
 	if(is.null(params))
 	{
 		if(order[1] == 1 && order[2] == 1)
@@ -57,7 +58,7 @@ function(
 			}
 			else
 			{
-				params = c(1, 0.2, 1.04, 0.3, 0.01, 0.9, 
+				params = c(1, 0.2, 1.04, 0.3, 0.01, 0.9,
 					0.3, -0.02, -0.01, 0.01, 0.4, -0.06, 0.02, 0.3, 0.5,
 					0.2, 0.01, -0.1, -0.03, 0.3, -0.06, 0.7, 0.01, 0.5)
 			}
@@ -81,19 +82,19 @@ function(
 		# fill the rest: might be a bad idea
 		params = c(params, rep(0.01, params.length - length(params)))
 	}
-	
+
 	# check the parameter list
 	if(length(params) != params.length)
 	{
 		stop("length of parameters doesn't match the requiered length for the requested BEKK model");
 	}
-	
+
 	# how many parameter matrices in total
 	total.par.matrices = 1 + order[1] + order[2]
 
 	# declare the parameter list
 	buff.par = list()
-	
+
 	# first initialize the C matrix
 	tmp.array = array(rep(0, series.count^2), dim = c(series.count, series.count))
 	iter = 1
@@ -153,7 +154,7 @@ function(
 		HLAGS[[count]] = array(rep(0, series.count^2), dim = c(series.count,series.count))
 		diag(HLAGS[[count]]) = 1
 	}
-	
+
 	H = array(rep(0, series.count^2), dim = c(series.count, series.count))
 	cor = numeric()
 	eps.list = list()			# declare the estimated standard deviation series
@@ -161,7 +162,7 @@ function(
 	{
 		eps.list[[i]] = numeric()
 	}
-	
+
 	sd = list()			# declare the estimated standard deviation series
 	for(i in 1:series.count)
 	{
@@ -174,7 +175,7 @@ function(
 	{
 		for(i in 1:series.count)
 		{
-			eps.list[[i]][count] = 0 
+			eps.list[[i]][count] = 0
 		}
 	}
 
@@ -220,24 +221,24 @@ function(
 		#cor[count] = H[1,2]/(sqrt(H[1,1] * H[2,2]))
 		for(i in 1:series.count)
 		{
-			sd[[i]][count] = sqrt(H[i, i]) 
+			sd[[i]][count] = sqrt(H[i, i])
 			eps.list[[i]][count] = eps[i,1]
 		}
 	}
-	
-	
+
+
 	names(order) <- c("GARCH component", "ARCH component")
 	names(buff.par) <- as.integer(seq(1, order[1] + order[2] + 1))
-	
+
 	nu = nu[51:T]
-	#cor = cor[51:T]	
+	#cor = cor[51:T]
 	for(i in 1:series.count)
 	{
-		sd[[i]] = sd[[i]][51:T] 
-		eps.list[[i]] = eps.list[[i]][51:T] 
+		sd[[i]] = sd[[i]][51:T]
+		eps.list[[i]] = eps.list[[i]][51:T]
 	}
 	T = T - 50
-	
+
 	mvBEKK.sim <- list(
 		length = T,
 		series.count = series.count,
@@ -253,9 +254,9 @@ function(
 	)
 
 	class(mvBEKK.sim) <- "mvBEKK.sim"
-	
+
 	cat("Class attributes are accessible through following names:\n")
 	cat(names(mvBEKK.sim), "\n")
-	
+
 	return(mvBEKK.sim)
 }

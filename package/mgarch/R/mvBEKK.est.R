@@ -18,9 +18,10 @@
 
 ####################################################
 ## TODO LIST
-## 1. t-distribution is to be added 
+## 1. t-distribution is to be added
 ####################################################
 
+##' @export
 mvBEKK.est<-
 function(
 		eps,			# an data frame holding the time series
@@ -31,7 +32,7 @@ function(
 		verbose = F
 	)
 {
-  
+
   count.triangular <-
     function(dimension){
       if(dimension <= 0){
@@ -41,7 +42,7 @@ function(
         dimension + count.triangular(dimension - 1)
       }
     }
-  
+
   if(verbose == T){
     out <- function(...){
       cat(...)
@@ -50,7 +51,7 @@ function(
   else{
     out <- function(...) { }
   }
-  
+
     # get the length and the number of the series
 	series.length = length(eps[,1])
 	series.count  = length(eps[1,])
@@ -61,16 +62,16 @@ function(
 	{
 		stop("order property should contain integer values")
 	}
-	
+
 	# GARCH effect could be set to 0, but, ARCH should be greater than 0
 	if(order[1] < 0 || order[2] < 1)
 	{
 		stop("BEKK(",order[1],",",order[2],") is not implemented.")
 	}
-	
+
 	# construct the paramters list.
 	# first get the length of the parameter list
-	params.length = count.triangular(series.count) + (order[2] * series.count^2) + (order[1] * series.count^2) 
+	params.length = count.triangular(series.count) + (order[2] * series.count^2) + (order[1] * series.count^2)
 
 	if(is.null(params))
 	{
@@ -114,7 +115,7 @@ function(
 			stop("fixed array could not contain more index-value pairs than the params array length");
 		}
 	}
-	
+
 	# check the method specified in the argument list
 	if(!(
 		(method == "Nelder-Mead") ||
@@ -127,7 +128,7 @@ function(
 		stop("'", method, "' method is not available")
 	}
 
-	
+
 	fake.params = params
 	if(!is.null(fixed))
 	{
@@ -139,7 +140,7 @@ function(
 		}
 		fake.params = na.omit(fake.params)
 	}
-	
+
 	# parameters seem appropriate
 	# define the loglikelihood function
 	loglikelihood.C <- function(params)
@@ -156,11 +157,11 @@ function(
 			retval = 0.0,
 			PACKAGE = "mgarch"
 		)
-		
+
 		if(is.nan(loglikelihood.C$retval) == T)
 		{
 			nonusedret = 1e+100
-			
+
 		}
 		else
 		{
@@ -170,9 +171,9 @@ function(
 	}
 
 	# begin estimation process
-	
+
 	# first log the start time
-	start = Sys.time()		
+	start = Sys.time()
 	out("* Starting estimation process.\n")
 	out("* Optimization Method: '", method, "'\n")
 
@@ -196,7 +197,7 @@ function(
 	# TODO
 	# estimation$hessian is non-existing if fixed parameter list contains all the
 	# paramters to be estimated. That is that the estimation procedure gets no parameters,
-	# thus, there is no errors... Fix it... How? 
+	# thus, there is no errors... Fix it... How?
 	# Whether encapsulate with an "if" statement, probably not efficient,
 	# or give a fake hessian
 
@@ -214,7 +215,7 @@ function(
 	{
 		warning("negative inverted hessian matrix element")
 	}
-	
+
 	# fix the asymptotic-theory standard errors of the
 	# coefficient estimates with fixed parameters
 	if(!is.null(fixed))
@@ -252,7 +253,7 @@ function(
 	# first initialize the first asy.se.coef matrix, corresponding to the C matrix
 	tmp.array = array(rep(0, series.count^2), dim = c(series.count, series.count))
 	tmp.array[!lower.tri(tmp.array)] = diag.inv.hessian[1:length(which(!lower.tri(tmp.array) == T))]
-	asy.se.coef[[1]] = tmp.array 
+	asy.se.coef[[1]] = tmp.array
 
 	# following loop initalizes the ARCH and GARCH parameter matrices respectively
 	for(count in 1:(parnum - 1))
@@ -260,9 +261,9 @@ function(
 		# !! a bit hard to follow
 		asy.se.coef[[count + 1]] = array(diag.inv.hessian[(count.triangular(series.count) + 1 + (count - 1) * series.count^2):(count.triangular(series.count) + 1 + series.count^2 + (count - 1) * series.count^2)], dim = c(series.count, series.count));
 	}
-	
+
 	buff.par = list()		# declare the parameter list
-	
+
 	# shift the fixed parameters inside the estimated parameters
 	if(!is.null(fixed))
 	{
@@ -307,7 +308,7 @@ function(
 
 	# calculate the transposes of the parameter matrices
 	buff.par.transposed = lapply(buff.par, t)
-	
+
 	# start diagnostics
 	out("* Starting diagnostics...\n")
 	out("* Calculating estimated:\n")
@@ -338,7 +339,7 @@ function(
 			residuals[[i]][count] = 0
 		}
 	}
-	
+
 	resid = array(rep(0,series.count), dim = c(series.count,1)) # declare a temporary residuals buffer
 
 	# calculate eigenvalues
@@ -347,7 +348,7 @@ function(
 	temp = 0
 	for(count in 2:parnum)
 	{
-		temp = temp + kronecker(buff.par[[count]], buff.par[[count]]) 
+		temp = temp + kronecker(buff.par[[count]], buff.par[[count]])
 	}
 	eigenvalues = svd(temp)$d
 
@@ -363,8 +364,8 @@ function(
 	denom = solve(diag(rep(1, series.count^2)) - temp)
 	sigma = denom %*% numerat
 	dim(sigma) = c(series.count, series.count)
-	
-	H = cov(eps)	# to initialize, use the covariance matrix of the series 
+
+	H = cov(eps)	# to initialize, use the covariance matrix of the series
 	H.estimated = lapply(1:series.length, function(x){H})
 
 	cor = list()		# declare the estimated correlation series
@@ -381,9 +382,9 @@ function(
 	{
 		sd[[i]] = numeric()
 	}
-	
+
 	eps.est = array(rep(0,series.count), dim = c(series.count,1))	# declare a temporary eps buffer
-	
+
 	CTERM = buff.par.transposed[[1]] %*% buff.par[[1]] # calculate the C'C term
 
 	out("* Entering Loop...");
@@ -400,14 +401,14 @@ function(
 		HLAGS[[1]] = H
 
 		# a bit complicated but following explanation will be useful hopefully
-		# H = (C')x(C) + (A')(E_t-1)(E_t-1')(A) + (B')(E_t-2)(E_t-2')(B) + ... +  (G')(H_t-1)(G) + (L')(H_t-2)(L) + ... 
+		# H = (C')x(C) + (A')(E_t-1)(E_t-1')(A) + (B')(E_t-2)(E_t-2')(B) + ... +  (G')(H_t-1)(G) + (L')(H_t-2)(L) + ...
 		#                    |_____________|          |_____________|             |____________|   |____________| |_____|
 		#                        E1 TERM                  E2 TERM                     G1 TERM         G2 TERM     G3.G4..
 		#                |____________________|   |____________________| |_____|
 		#                        A1 TERM                  A2 TERM        A3.A4..
-		#	   |______|  |_____________________________________________________|  |______________________________________|  
+		#	   |______|  |_____________________________________________________|  |______________________________________|
 		#      C TERM                         A TERM                                              G TERM
-		
+
 		H = CTERM
 		ord1 = 1
 		for(tmp.count in 1:(order[2] + order[1]))
@@ -426,17 +427,17 @@ function(
 		}
 
 		# TODO add appropriate comments for following assignments and calculations
-  		H.estimated[[count]] = H 
+  		H.estimated[[count]] = H
 		svdH = svd(H)
 		sqrtH = svdH$u %*% diag(sqrt(svdH$d)) %*% t(svdH$v)
-		
+
 		invsqrtH = solve(sqrtH)
 		resid = invsqrtH %*% as.matrix(t(eps[count,]))
 		for(i in 1:series.count)
 		{
 			residuals[[i]][count] = resid[i,1]
 		}
-	
+
 		# TODO: check
 		for(i in 1:series.count)
 		{
@@ -450,10 +451,10 @@ function(
 			sd[[i]][count] = sqrt(H[i,i])
 		}
 	}
-	
+
 	# diagnostics ready
 	out("Diagnostics ended...\n")
-	
+
 	names(order) <- c("GARCH component", "ARCH component")
 	names(buff.par) <- as.integer(seq(1, parnum))
 
@@ -476,9 +477,9 @@ function(
 	)
 
 	class(mvBEKK.est) = "mvBEKK.est"
-	
+
 	out("Class attributes are accessible through following names:\n")
 	out(names(mvBEKK.est), "\n")
-	
+
 	return(mvBEKK.est)
 }
