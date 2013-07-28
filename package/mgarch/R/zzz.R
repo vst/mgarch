@@ -1,3 +1,6 @@
+##' @useDynLib mgarch
+
+
 .onLoad <- function(lib, pkg) {
   ## print(lib)
   ## print(pkg)

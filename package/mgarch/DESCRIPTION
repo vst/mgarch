@@ -1,6 +1,6 @@
 Package: mgarch
-Version: 0.00-3
-Date: 2013-06-14
+Version: 0.00-4
+Date: 2013-07-28
 Title: various tools for simulating, estimating and diagnosting MGARCH processes
 Author: Harald SCHMIDBAUER <harald@hs-stat.com>,
     Angi Roesch <angi.r@t-online.de>,
