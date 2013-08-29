@@ -1,2 +1,5 @@
 *\#*
 *~
+*.o
+*.so
+mgarch_*.tar.gz
