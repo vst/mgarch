@@ -1,12 +1,10 @@
-===============================================================
- mgarch - R Package for MGARCH Model Simulation and Estimation
-===============================================================
+# mgarch - R Package for MGARCH Model Simulation and Estimation
 
-``mgarch`` is an R package for simulating and estimating multivariate
+*mgarch* is an R package for simulating and estimating multivariate
 GARCH models. Currently only BEKK specification is implemented. This
-software is licensed with the GPLv3::
+software is licensed under the GPLv3::
 
-    Copyright (C) 2005-2010 Harald Schmidbauer <harald@hs-stat.com>,
+    Copyright (C) 2005-2014 Harald Schmidbauer <harald@hs-stat.com>,
         Angi Roesch <angi@angi-stat.com>,
         Vehbi Sinan Tunalioglu <vst@vsthost.com>
 
