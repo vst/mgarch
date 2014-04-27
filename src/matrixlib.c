@@ -17,8 +17,7 @@
  * Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <R.h>
 #include <math.h>
 #include "matrixlib.h"
 
@@ -34,10 +33,10 @@
 
 int err_exit(char * err_message, char * func_name)
 {
-	printf("\nERROR in matrixlib:\n\t %s", err_message);
-	printf("\n(in function %s)", func_name);
-	printf("\nExiting program\n");
-	exit(0);
+	Rprintf("\nERROR in matrixlib:\n\t %s", err_message);
+	Rprintf("\n(in function %s)", func_name);
+	Rprintf("\nExiting program\n");
+        error("Exiting...");
 }
 
 void mem_copy(int * source, int * destination, unsigned int length)
@@ -178,7 +177,7 @@ MAT * m_get(int m, int n)
 	}
 
 	/* atempt to allocate memory for the matrix */
-	matrix = NEW(MAT);
+	matrix = NEW_MM(MAT);
 	if(matrix == (MAT *) NULL)
 	{
 		err_exit(ERR_MEM, "m_get");

@@ -17,12 +17,13 @@
  * Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#include <stdio.h>
+#include <R.h>
+#include <stdlib.h>
 #include <math.h>
 #include "matrixlib.h"
 
-#define VERYBIGNUMBER	1.0e+10
-#define ERROR			1.0e+10
+#define VERYBIGNUMBER  1.0e+10
+#define ERROR_TERM     1.0e+10
 
 #define maxval(p,q)  (p > q ? p : q)
 
@@ -89,22 +90,22 @@ void loglikelihood_GJR(
 
 	if(switcher[0] < 0)	/* check p switch */
 	{
-		printf("ERROR! invalid p switch. ( p = %d )\n", switcher[0]);
-		*returnval = ERROR;
+		Rprintf("ERROR! invalid p switch. ( p = %d )\n", switcher[0]);
+		*returnval = ERROR_TERM;
 		return;
 	}
 
 	if(switcher[1] < 0)	/* check q switch */
 	{
-		printf("ERROR! invalid q switch. ( q = %d )\n", switcher[1]);
-		*returnval = ERROR;
+		Rprintf("ERROR! invalid q switch. ( q = %d )\n", switcher[1]);
+		*returnval = ERROR_TERM;
 		return;
 	}
 
 	if(switcher[2] < 0)	/* check g switch */
 	{
-		printf("ERROR! invalid g switch. ( g = %d )\n", switcher[2]);
-		*returnval = ERROR;
+		Rprintf("ERROR! invalid g switch. ( g = %d )\n", switcher[2]);
+		*returnval = ERROR_TERM;
 		return;
 	}
 	/**
@@ -329,13 +330,13 @@ void loglikelihood_GJR(
 		 * A term calculated and accumulated to H term.
 		 * Continue with the G term
 		 */
-		
+
 		for(counttemp = 0; counttemp < switcher[0]; counttemp++)
 		{
 			/**
 			 * calculate the (G_x' %*% H_x %*% G_x) term
 			 */
-			
+
 			m_mlt(G_t[counttemp], HOLD[counttemp], T4);
 			m_mlt(T4, G[counttemp], T3); /* we got the term in T3 */
 
@@ -346,7 +347,7 @@ void loglikelihood_GJR(
 			m_add(H, T3, T4); /* addition completed, but assign the T4 back to H */
 			m_copy(T4, H);
 		}
-		
+
 		/**
 		 * Now the R TERM part...
 		 */
@@ -446,7 +447,7 @@ void loglikelihood_GJR(
 			/**
 			 * H is not invertable
 			 */
-			printf("H IS SINGULAR!...\n");
+			Rprintf("H IS SINGULAR!...\n");
 
 			H->me[0][0] *= 1.01;
 			detcomp = H->me[0][0] * H->me[1][1] - H->me[0][1] * H->me[1][0];

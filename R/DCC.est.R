@@ -16,16 +16,18 @@
 ## writing to the Free Software Foundation, Inc., 59 Temple Place,
 ## Suite 330, Boston, MA  02111-1307  USA.
 
+##' Estimates a DCC-GARCH model.
+##'
+##' @param eps time series
+##' @param params initial parameters for the optim function
+##' @param M the M parameter as it appears in the paper
+##' @param verbose predicate which defines if we go verbose debugging
+##' @return an instance of \code{DCC.est} classx
 ##' @export
-DCC.est <-
-function(
-         eps,              # time series as a 2 dimensional data frame
-         params = NULL,    # initial parameters for the optim function
-         M = 5,            # M as it appears in the Paper
-         verbose = F
-	)
-{
-
+DCC.est <- function(eps,           # time series as a 2 dimensional data frame
+                    params = NULL, # initial parameters for the optim function
+                    M = 5,         # M as it appears in the Paper
+                    verbose = F) {
   if(verbose == T){
     out <- function(...){
       cat(...)
@@ -64,8 +66,8 @@ function(
   out("* Starting estimation process.\n")
 
   est.DCCmgarch = function(M,ini.params){
-    # objective function
-	enc.DCCmgarchloglike <- function(theta) {
+    ## objective function
+    enc.DCCmgarchloglike <- function(theta) {
       theta1 = theta[1]
       theta2 = theta[2]
 
@@ -104,48 +106,48 @@ function(
       dR2 = array(c(0,0,0,0), dim = c(2,2))
 
       for ( i in (M+2):T ) { # Here, we can calculate Psi!
-		Psi[1,2,i-1] = cor(u1[(i-M):(i-1)], u2[(i-M):(i-1)])
-		Psi[2,1,i-1] = Psi[1,2,i-1]
-		R[,,i] = (1 - theta1 - theta2) * cor(eps) + theta1 * Psi[,,i-1] + theta2 * R[,,i-1]
+        Psi[1,2,i-1] = cor(u1[(i-M):(i-1)], u2[(i-M):(i-1)])
+        Psi[2,1,i-1] = Psi[1,2,i-1]
+        R[,,i] = (1 - theta1 - theta2) * cor(eps) + theta1 * Psi[,,i-1] + theta2 * R[,,i-1]
       }
 
       for ( i in 2:T ) {
         u = array(c(u1[i],u2[i]), dim = c(2,1))
         R.inverse = solve(R[,,i])
-		dR1  = -cor(eps) + Psi[,,i-1] + theta2 * dR1
-		dR2  = -cor(eps) + R[,,i-1] + theta2 * dR2
-		grad1 = grad1 + sum(diag(R.inverse %*% dR1))
-		grad1 = grad1 - t(u) %*% R.inverse %*% dR1 %*% R.inverse %*% u
-		grad2 = grad2 + sum(diag(R.inverse %*% dR2))
-		grad2 = grad2 - t(u) %*% R.inverse %*% dR2 %*% R.inverse %*% u
+        dR1  = -cor(eps) + Psi[,,i-1] + theta2 * dR1
+        dR2  = -cor(eps) + R[,,i-1] + theta2 * dR2
+        grad1 = grad1 + sum(diag(R.inverse %*% dR1))
+        grad1 = grad1 - t(u) %*% R.inverse %*% dR1 %*% R.inverse %*% u
+        grad2 = grad2 + sum(diag(R.inverse %*% dR2))
+        grad2 = grad2 - t(u) %*% R.inverse %*% dR2 %*% R.inverse %*% u
       }
       return(c(grad1/2,grad2/2))
-	}
+    }
 
-	# constraint optimization of DCC parameters
-	result =
+    ## constraint optimization of DCC parameters
+    result =
       constrOptim(ini.params,
                   enc.DCCmgarchloglike,
                   grad.DCCmgarchloglike,
                   ui= rbind(c(1,0),c(0,1),c(-1,-1)),
                   ci = c(0,0,-1))
 
-    # one iteration of optim, just to get the hessian returned (which is not provided by
-	# constrOptim):
-	resulth =
+    ## one iteration of optim, just to get the hessian returned (which
+    ## is not provided by constrOptim):
+    resulth =
       optim(result$par,
             enc.DCCmgarchloglike,
             grad.DCCmgarchloglike,
             control = list(maxit=1),
             hessian = TRUE)
 
-	if (is.finite(det(resulth$hessian))) {
+    if (is.finite(det(resulth$hessian))) {
       Sigma = solve(resulth$hessian)
       se = c(sqrt(diag(Sigma)))
-	}
-	else {
+    }
+    else {
       se = rep('NaN',2)
-	}
+    }
     est.DCCmgarch = list(par = result$par, se = se)
   }
 

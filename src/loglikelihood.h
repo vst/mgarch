@@ -21,8 +21,8 @@
 #include <math.h>
 #include "matrixlib.h"
 
-#define VERYBIGNUMBER	1.0e+10
-#define ERROR		1.0e+10
+#define VERYBIGNUMBER  1.0e+10
+#define ERROR_TERM     1.0e+10
 
 #define maxval(p,q)  (p > q ? p : q)
 int count_triangular(int dimension);

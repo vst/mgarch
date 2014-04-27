@@ -17,7 +17,7 @@
  * Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#include <stdio.h>
+#include <R.h>
 #include <math.h>
 #include "matrixlib.h"
 #include "loglikelihood.h"
@@ -61,7 +61,7 @@ void initialize_C(double * par_array, MAT *C)
 			{
 				m_set_val(C, j, i, par_array[count]);
 				count++;
-			}	
+			}
 		}
 	}
 
@@ -108,7 +108,7 @@ void initialize_H(int dimension, MAT *H)
 				m_set_val(H, j, i, 0);
 			}
 		}
-	
+
 	}
 }
 
@@ -128,11 +128,11 @@ void loglikelihood(
 	 * TODO
 	 * all malloced things should be freed at the end.
 	 */
-	
+
 	/**
 	 * VARIABLE DECLARATIONS
 	 */
-	
+
 	/* Paramter Matrices */
 	MAT *C = NULL;			/* declare the C parameter matrix*/
 	MAT *C_t = NULL;		/* declare the transposed C parameter matrix*/
@@ -145,7 +145,7 @@ void loglikelihood(
 	MAT **HOLD = NULL;		/* an array holding former H terms */
 
 	/* temporary matrices used for calculations */
-	
+
 	MAT *E0 = NULL;
 	MAT *E1 = NULL;
 	MAT *E1_tmp = NULL;
@@ -158,19 +158,19 @@ void loglikelihood(
 	int count, counttemp, i, j;	/* will be used for loop counter */
 	double temp, buffer;		/* will be used for temporary calculations */
 	double detcomp;			/* the inner part of sqrt() function for determinant calculation */
-		
+
 	double * buffer_params;
 	int shifted;
 	int temp_length;
 	int check_point;
-		
+
 	/**
 	 * get the seriestl series and convert it into a multidimensional series array
 	 */
-	double **series; 
+	double **series;
 	series = (double **)malloc(*series_count * sizeof(double *));
 	count = 0;
-	
+
 	for(i = 0; i < *series_count; i++)
 	{
 		series[i] = (double *)malloc(*series_length * sizeof(double));
@@ -188,18 +188,18 @@ void loglikelihood(
 	{
 		for(i = 0; i < *series_count; i++)
 		{
-			printf("%f - ", series[i][j]);
+			Rprintf("%f - ", series[i][j]);
 		}
-		printf("\n");
+		Rprintf("\n");
 	}
-*/	
+*/
 
-	
+
 	/**
 	 * TODO
 	 * check all the function arguments
 	 */
-	
+
 	/**
 	 * TODO
 	 * check the model specification,
@@ -209,33 +209,33 @@ void loglikelihood(
 	 * these are p and q values of BEKK(p,q,K) model.
 	 * These can not be less then 0
 	 */
-	
+
 	if(switcher[0] < 0)	/* check p switch */
 	{
-		printf("ERROR! invalid p switch. ( p = %d )\n", switcher[0]);
-		*returnval = ERROR;
+		Rprintf("ERROR! invalid p switch. ( p = %d )\n", switcher[0]);
+		*returnval = ERROR_TERM;
 		return;
 	}
-	
+
 	if(switcher[1] < 0)	/* check q switch */
 	{
-		printf("ERROR! invalid q switch. ( q = %d )\n", switcher[1]);
-		*returnval = ERROR;
+		Rprintf("ERROR! invalid q switch. ( q = %d )\n", switcher[1]);
+		*returnval = ERROR_TERM;
 		return;
-	}	
+	}
 	/**
 	 * initialize the variables
 	 */
 
 	/* memory allocation for the parameter matrix arrays */
-	A   = (MAT **) malloc(switcher[1] * sizeof(MAT *));  
-	A_t = (MAT **) malloc(switcher[1] * sizeof(MAT *));  
-	G   = (MAT **) malloc(switcher[0] * sizeof(MAT *));  
-	G_t = (MAT **) malloc(switcher[0] * sizeof(MAT *));  
+	A   = (MAT **) malloc(switcher[1] * sizeof(MAT *));
+	A_t = (MAT **) malloc(switcher[1] * sizeof(MAT *));
+	G   = (MAT **) malloc(switcher[0] * sizeof(MAT *));
+	G_t = (MAT **) malloc(switcher[0] * sizeof(MAT *));
 
 	/* memory allocation for the array that holds the previous H terms */
-	HOLD   = (MAT **) malloc(switcher[0] * sizeof(MAT *));  
-	
+	HOLD   = (MAT **) malloc(switcher[0] * sizeof(MAT *));
+
 	/**
 	 * ATTENTION!
 	 * HERE, WE WILL INSERT THE FIXED PARAMETERS
@@ -250,7 +250,7 @@ void loglikelihood(
 		 */
 		temp_length = (count_triangular(*series_count) + *series_count * *series_count * switcher[0] + *series_count * *series_count * switcher[1]);
 		buffer_params = (double *) malloc(temp_length * sizeof(double));
-		
+
 		for(count = 0; count < temp_length; count++)
 		{
 			check_point = 0;
@@ -279,20 +279,20 @@ void loglikelihood(
 		 */
 		params = buffer_params; /* copy the modified parameter array into params */
 	}
-	
+
 	/* initialize the C parameter matrix*/
 	C = m_get(*series_count, *series_count);
 	initialize_C(params, C);
 	/* m_output(C); */
-	
+
 	/* initialize the transposed C parameter matrix*/
 	C_t = m_get(*series_count, *series_count);
 	m_transp(C, C_t);
-	
+
 	/* initialize the C term by multiplying the C and C_t matrices */
 	C_term = m_get(*series_count, *series_count);
 	m_mlt(C_t, C, C_term);
-	
+
 	/* We have the C term. Now, do the critical A and G parameter matrices allocation*/
 	for(count = 0; count < switcher[1]; count++)
 	{
@@ -301,11 +301,11 @@ void loglikelihood(
 		/* m_output(A[count]); */
 
 		A_t[count] = m_get(*series_count, *series_count);
-		m_transp(A[count], A_t[count]);	
+		m_transp(A[count], A_t[count]);
 	}
-	
+
 	counttemp = count;	/* keep the counter where we left in the params matrix */
-	
+
 	for(count = 0; count < switcher[0]; count++)
 	{
 		G[count] = m_get(*series_count, *series_count);
@@ -313,19 +313,19 @@ void loglikelihood(
 		/* m_output(G[count]); */
 
 		G_t[count] = m_get(*series_count, *series_count);
-		m_transp(G[count], G_t[count]);	
+		m_transp(G[count], G_t[count]);
 	}
-	
+
 	/* initialize the H matrix. Then, do the critical buffer HOLD array for previous H terms */
 	H = m_get(*series_count, *series_count);
 	initialize_H(*series_count, H);
 	/* m_output(H); */
-	
+
 	for(count = 0; count < switcher[0]; count++)
 	{
 		HOLD[count] = m_get(*series_count, *series_count);
 	}
-	
+
 	/**
 	 * TEMPORARY MATRICES FOR CALCULATIONS
 	 */
@@ -337,7 +337,7 @@ void loglikelihood(
 	TEMP	= m_get(*series_count, *series_count); /* an n by n matrix for temp usage */
 	ATERM	= m_get(*series_count, *series_count); /* an n by n matrix */
 	GTERM	= m_get(*series_count, *series_count); /* an n by n matrix */
-	
+
 	/**
 	 * now doing the calculations
 	 */
@@ -350,7 +350,7 @@ void loglikelihood(
 	 * count = max(p,q)
 	 */
 
-	
+
 	count = maxval(switcher[0], switcher[1]);
 	while(count < *series_length) /* begin the loop */
 	{
@@ -359,7 +359,7 @@ void loglikelihood(
 		 * shift the H TERMS to previous HOLD items.
 		 * HOLD[1] becomes H, HOLD[2] becomes HOLD[1] and so on
 		 */
-	
+
 		for(counttemp = switcher[0] - 1; counttemp > 0; counttemp--)
 		{
 			m_copy(HOLD[counttemp - 1], HOLD[counttemp]);
@@ -375,12 +375,12 @@ void loglikelihood(
 
 		/**
 		 * a bit complicated but following explanation will be useful hopefully
-		 * H = (C')x(C) + (A')(E_t-1)(E_t-1')(A) + (B')(E_t-2)(E_t-2')(B) + ... +  (G')(H_t-1)(G) + (L')(H_t-2)(L) + ... 
+		 * H = (C')x(C) + (A')(E_t-1)(E_t-1')(A) + (B')(E_t-2)(E_t-2')(B) + ... +  (G')(H_t-1)(G) + (L')(H_t-2)(L) + ...
 		 *                    |_____________|          |_____________|             |____________|   |____________| |_____|
 		 *                        E1 TERM                  E2 TERM                     G1 TERM         G2 TERM     G3.G4..
 		 *                |____________________|   |____________________| |_____|
 		 *                        A1 TERM                  A2 TERM        A3.A4..
-		 *     |______|  |_____________________________________________________|  |______________________________________|  
+		 *     |______|  |_____________________________________________________|  |______________________________________|
 		 *      C TERM                         A TERM                                              G TERM
 		 */
 
@@ -407,7 +407,7 @@ void loglikelihood(
 			/**
 			 * calculate the (A_x' %*% E_t-x %*% E_t-x' %*% A_x) term
 			 */
-			
+
 			m_mlt(A_t[counttemp], ETERM, TEMP);
 			m_mlt(TEMP, A[counttemp], ATERM); /* we got the term in ATERM */
 
@@ -423,13 +423,13 @@ void loglikelihood(
 		 * A term calculated and accumulated to H term.
 		 * Continue with the G term
 		 */
-		
+
 		for(counttemp = 0; counttemp < switcher[0]; counttemp++)
 		{
 			/**
 			 * calculate the (G_x' %*% H_x %*% G_x) term
 			 */
-			
+
 			m_mlt(G_t[counttemp], HOLD[counttemp], TEMP);
 			m_mlt(TEMP, G[counttemp], GTERM); /* we got the term in GTERM */
 
@@ -453,43 +453,43 @@ void loglikelihood(
 		 * f(x) = (1 / (2*pi)^(n/2) * |E|^(1/2)) * (e^( -(x - m)' * E^(-1) * (x - m) / 2))
 		 *
 		 * MULTIVARIATE LOGNORMAL DENSITY FUNCTION
-		 * 
+		 *
 		 * log[f(x)] = - log[(2 * pi)^(n/2) *  sqrt(|E|)] - (x - m)' * E^(-1) * (x - m) / 2
 		 *                                                       |____________ ___________|
 		 *                                                                    V
 		 *                                                        this will be stored in temp
-		 * 
+		 *
 		 */
-	
+
 		/**
 		 * CALCULATING TEMP VALUE
-		 */	
+		 */
 		temp = 0;	/* reset the temp variable */
-		
+
 		/**
 		 * CRITICAL!
 		 * check whether the det(H) is 0 or not.
 		 * if it is 0, that means that the H term is not invertable.
-		 * if it is not invertable, we will add following matrix to the 
+		 * if it is not invertable, we will add following matrix to the
 		 * H term: (CHANGED: WE ONLY MULTIPLY THE H[0,0] WITH 1.01)
-		 * 
+		 *
 		 * NEW_H_TERM = H * | 0.01  0.00 |
 		 *                  | 0.00  0.00 |
 		 */
 		detcomp = m_det(H);
-		
+
 		/**
 		 * DEBUG
 		 * printf("det(H)² = %f\n", detcomp);
 		 */
-		
+
 		if(detcomp == 0)
 		{
 			/**
 			 * H is not invertable
 			 */
-			printf("H IS SINGULAR!...\n");
-			
+			Rprintf("H IS SINGULAR!...\n");
+
 			H->me[0][0] *= 1.01;
 			detcomp = m_det(H);
 		}
@@ -501,7 +501,7 @@ void loglikelihood(
 			*returnval = VERYBIGNUMBER;
 			return;
 		}
-		
+
 
 		/**
 		 * calculate  E^(-1)
@@ -509,9 +509,9 @@ void loglikelihood(
 		 * that doesn't work sometimes. Thus we do it by hand:
 		 * m_pow(H, -1, T3);
 		 */
-	
+
 		m_inverse(H, TEMP);
-	
+
 		/**
 		 * a loop here
 		 */
@@ -520,28 +520,28 @@ void loglikelihood(
 			/* initializing (x - m) term (since m = 0; x)*/
 			m_set_val(E1, i, 0, series[i][count]);
 		}
-		
+
 		m_transp(E1, E2);
 
 		m_mlt(TEMP, E1, E1_tmp);
 		m_mlt(E2, E1_tmp, E0); /* ??? */
-		
+
 		temp = E0->me[0][0];
 
 		buffer = (-1) * log(2 * M_PI * sqrt(detcomp)) - (temp / 2);
 		*returnval += buffer;
-		
+
 		count++;					/* next period */
 	}
 
-	*returnval *= -1; 
+	*returnval *= -1;
 	if(isnan(*returnval))
 	{
 		*returnval = VERYBIGNUMBER;
 	}
 	/**
 	 * DEBUG
-	 * printf("\nreturnval : %f\n", *returnval);
+	 * Rprintf("\nreturnval : %f\n", *returnval);
 	 */
 	/**
 	 * free malloced variables
@@ -559,7 +559,7 @@ void loglikelihood(
 	}
 	free(A);
 	free(A_t);
-	
+
 	for(i = 0; i < switcher[0]; i++)
 	{
 		m_free(G[i]);
@@ -569,7 +569,7 @@ void loglikelihood(
 	free(G);
 	free(G_t);
 	free(HOLD);
-	
+
 	m_free(C);
 	m_free(C_t);
 	m_free(C_term);
@@ -582,5 +582,5 @@ void loglikelihood(
 	m_free(TEMP);
 	m_free(ATERM);
 	m_free(GTERM);
-	
+
 }
