@@ -1,7 +1,7 @@
 Package: mgarch
-Version: 0.00-5
+Version: 0.00-4
 Date: 2014-04-27
-Title: various tools for simulating, estimating and diagnosting MGARCH processes
+Title: Tools for simulating, estimating and diagnosing MGARCH processes
 Authors@R: c(
     person(given="Vehbi Sinan", family="Tunalioglu", email="vst@vsthost.com",
     role=c("cre", "aut")),
@@ -13,7 +13,7 @@ Depends:
     R (>= 3.0.0),
     tseries,
     mvtnorm
-Description: Package for simulating, estimating and diagnosting various MGARCH
-    models
+Description: This package helps to simulate, estimate and diagnos some
+    MGARCH models, namely BEKK, GJR and DCC specifications.
 License: GPL (>= 3)
-URL: http://github.com/vst/mgarch/
+URL: https://github.com/vst/mgarch/
