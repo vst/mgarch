@@ -1,5 +1,5 @@
 Package: mgarch
-Version: 0.00-4
+Version: 0.0-4
 Date: 2014-04-27
 Title: Tools for simulating, estimating and diagnosing MGARCH processes
 Authors@R: c(
