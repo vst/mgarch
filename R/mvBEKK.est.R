@@ -21,6 +21,9 @@
 ## 1. t-distribution is to be added
 ####################################################
 
+
+##' @import mvtnorm
+##' @import tseries
 ##' @export
 mvBEKK.est<-
 function(

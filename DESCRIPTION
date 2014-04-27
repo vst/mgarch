@@ -1,29 +1,19 @@
 Package: mgarch
-Version: 0.00-4
-Date: 2013-07-28
+Version: 0.00-5
+Date: 2014-04-27
 Title: various tools for simulating, estimating and diagnosting MGARCH processes
-Author: Harald SCHMIDBAUER <harald@hs-stat.com>,
-    Angi Roesch <angi.r@t-online.de>,
-    Vehbi Sinan TUNALIOGLU <vst@vsthost.com>
-Maintainer: Vehbi Sinan Tunalioglu <vst@vsthost.com>
+Authors@R: c(
+    person(given="Vehbi Sinan", family="Tunalioglu", email="vst@vsthost.com",
+    role=c("cre", "aut")),
+    person(given="Harald", family="Schmidbauer", email="harald@hs-stat.com",
+    role=c("aut")),
+    person(given="Angi", family="Roesch", email="angi.r@t-online.de",
+    role=c("aut")))
 Depends:
-    R (>= 2.6.0),
-    tseries,
-    mvtnorm
-Imports:
-    utils,
+    R (>= 3.0.0),
     tseries,
     mvtnorm
 Description: Package for simulating, estimating and diagnosting various MGARCH
-    processes
+    models
 License: GPL (>= 3)
-URL: http://github.com/beesdom/mgarch/
-Collate:
-    'DCC.est.R'
-    'cdts.R'
-    'elem.an.R'
-    'mGJR.est.R'
-    'mvBEKK.diag.R'
-    'mvBEKK.est.R'
-    'mvBEKK.sim.R'
-    'zzz.R'
+URL: http://github.com/vst/mgarch/

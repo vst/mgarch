@@ -17,8 +17,6 @@
  * Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <math.h>
 
 #ifndef MATRIXLIB
@@ -32,7 +30,7 @@
 #define maxval(p,q)				(p > q ? p : q)
 
 /* memory allocation routine for a given type. quantity to be allocated is 1 */
-#define NEW(type)				((type *) calloc(1, sizeof(type)))
+#define NEW_MM(type)				((type *) calloc(1, sizeof(type)))
 
 /* memory allocation routine for a given type. quantity to be allocated is user specified*/
 #define NEW_A(quantity,type)	((type *) calloc((unsigned int)(quantity), sizeof(type)))
